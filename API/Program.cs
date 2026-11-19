@@ -1,6 +1,7 @@
+using API.Controllers;
+using CORE.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using CORE.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,6 +11,7 @@ builder.Services.AddDbContext<StoreContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddScoped<IProductRepository, ProductsRepository>();
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -32,3 +34,9 @@ catch (Exception ex)
 
 
 app.Run();
+
+
+
+//IProductRepository is the menu. It lists what you can order, but it can’t cook anything.
+//ProductsRepository is the kitchen. It actually makes everything on the menu, using the database (the pantry).
+//wProductsController is the waiter. It takes the customer’s order (the HTTP request), passes it to the kitchen, and brings the food back (the JSON response).
